@@ -11,20 +11,22 @@ import tensorflow as tf
 
 dftrain = pd.read_csv('https://storage.googleapis.com/tf-datasets/titanic/train.csv')
 dfeval = pd.read_csv('https://storage.googleapis.com/tf-datasets/titanic/eval.csv')
-print(dftrain.head())
 y_train = dftrain.pop('survived')
 y_eval = dfeval.pop('survived')
 
-print(dftrain.head())
-print(y_train)
+CATEGORICAL_COLUMNS = ['sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'embark_town', 'alone']
+NUMERICAL_COLUMNS = ['age', 'fare']
 
-print(dftrain.describe())
+feature_columns = []
 
-print(dftrain.shape)
-plt.clf()
-#dftrain.age.hist(bins=20)
-#dftrain['class'].value_counts().plot(kind='barh')
-pd.concat([dftrain, y_train], axis=1).groupby('age').survived.mean().plot(kind='barh').set_xlabel('% survive')
+for feature_name in CATEGORICAL_COLUMNS:
+    vocabulary = dftrain[feature_name].unique()
+    feature_columns.append(tf.feature_column.categorical_column_with_vocabulary_list(feature_name, vocabulary))
+
+for feature_name in NUMERICAL_COLUMNS:
+    feature_columns.append(tf.feature_column.numeric_column(feature_name, dtype=tf.float32))
+
+print(feature_columns)
 
 #plt.plot()
-plt.show()
+#plt.show()
