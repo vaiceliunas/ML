@@ -16,7 +16,7 @@ def input_fn(features, labels, training=True, batch_size=256):
     dataset = tf.data.Dataset.from_tensor_slices((dict(features), labels))
 
     if training:
-        dataset = dataset.shuffle(100).repeat()
+        dataset = dataset.shuffle(1000).repeat()
     
     return dataset.batch(batch_size)
 
@@ -48,7 +48,7 @@ config = tf.estimator.RunConfig().replace(keep_checkpoint_max = 5,
 classifier = tf.estimator.DNNClassifier(feature_columns=my_feature_columns, hidden_units=[30, 10], n_classes=3, config = config) 
 
 train_input_fn_obj = lambda: input_fn(train, train_y, training=True)
-test_input_fn_obj = lambda: input_fn(test, test_y, training=True)
+test_input_fn_obj = lambda: input_fn(test, test_y, training=False)
 
 classifier.train(lambda: input_fn(train, train_y, training=True), steps=5000)
 print("evaluatinsim")
