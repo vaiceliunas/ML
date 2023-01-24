@@ -20,7 +20,11 @@ def input_fn(features, labels, training=True, batch_size=256):
     
     return dataset.batch(batch_size)
 
-CSV_COLUMN_NAMES = ['SepalLenhth', 'SepalWidth', 'PetalLength', 'PetalWidth', 'Species']
+def input_fn2(features, batch_size=256):
+
+    return tf.data.Dataset.from_tensor_slices(dict(features)).batch(batch_size)
+
+CSV_COLUMN_NAMES = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth', 'Species']
 SPECIES = ['Setosa', 'Versicolor', 'Virginica']
 
 train_path = tf.keras.utils.get_file( "iris.training.csv", "https://storage.googleapis.com/download.tensorflow.org/data/iris_training.csv")
@@ -52,4 +56,24 @@ test_input_fn_obj = lambda: input_fn(test, test_y, training=False)
 
 classifier.train(lambda: input_fn(train, train_y, training=True), steps=5000)
 print("evaluatinsim")
-classifier.evaluate(test_input_fn_obj)
+eval_result = classifier.evaluate(test_input_fn_obj)
+
+print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
+
+features = ['SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth']
+predict = {}
+
+print("Please type numeric values as promted.")
+for feature in features:
+    valid = True
+    while valid:
+        val = input(feature + ": ")
+        if not val.isdigit(): valid = False
+    predict[feature] = [float(val)]
+
+predictions = classifier.predict(input_fn=lambda: input_fn2(predict))
+for pred_dict in predictions:
+    class_id = pred_dict['class_ids'][0]
+    probability = pred_dict['probabilities'][class_id]
+
+    print('Prediction is "{}" ({:.1f}%)'.format(SPECIES[class_id], 100 * probability))
