@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from keras import datasets
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -49,6 +50,8 @@ model.compile(optimizer='adam',
 model.fit(train_images, train_labels, epochs=1)
 
 test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=1)
+
+model.save('saved_model/my_model')
 
 print('Test accuracy:', test_acc)
 
