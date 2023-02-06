@@ -58,5 +58,7 @@ model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentro
 
 history = model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
 
+model.save('saved_model/my_model')
+
 test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
 print(test_acc)
